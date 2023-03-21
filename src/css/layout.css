@@ -116,7 +116,7 @@
 	display: inline-block;
 	float: left;
 	height: 30px;
-	width: 110px;
+	width: 145px;
 	padding: 5px 5px 5px 36px;
 	margin: 5px;
 	font-size: 14px;
@@ -170,7 +170,7 @@
 }
 .attributes{
 	float: left;
-	width: calc(100% - 125px);
+	width: calc(100% - 165px);
 	height: 30px;
 	margin-top: 5px;
 	padding: 3px 10px 0 10px;

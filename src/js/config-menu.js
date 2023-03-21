@@ -166,7 +166,7 @@ var menu_template = `
 			<a class="trn" href="#">Help</a>
 			<ul>
 				<li><a class="trn dots" data-target="help/shortcuts.shortcuts" href="#">Keyboard Shortcuts</a></li>
-				<li><a class="trn external" target="_blank" href="https://github.com/viliusle/miniPaint/issues">Report issues</a></li>
+				<!--li><a class="trn external" target="_blank" href="https://github.com/viliusle/miniPaint/issues">Report issues</a></li-->
 				<li class="more">
 					<a class="trn" href="#">Language</a>
 					<ul>
@@ -183,6 +183,7 @@ var menu_template = `
 						<li><a data-target="help/translate.translate.pt" href="#">Portuguese</a>	
 						<li><a data-target="help/translate.translate.ru" href="#">Russian</a>	
 						<li><a data-target="help/translate.translate.tr" href="#">Turkish</a>	
+						<li><a data-target="help/translate.translate.vi" href="#">Việt Nam</a>	
 					</ul>
 				</li>
 				<li><div class="mid-line"></div></li>

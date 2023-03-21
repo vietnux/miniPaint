@@ -22,7 +22,8 @@ $LANGUAGES = [
 	'pt',
 	'ru',
 	'tr',
-	'zh',	
+	'zh',
+    'vi'
 ];
 
 $LANG_DIR = __DIR__ . '/../../src/js/languages/';

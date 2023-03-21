@@ -112,6 +112,7 @@ class Fill_class extends Base_tools_class {
 	}
 
 	fill_general(context, W, H, x, y, color_to, sensitivity, anti_aliasing, contiguous = false) {
+		alert("sadsa");
 		sensitivity = sensitivity * 255 / 100; //convert to 0-255 interval
 		x = parseInt(x);
 		y = parseInt(y);
