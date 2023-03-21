@@ -1,10 +1,13 @@
+import app from './../../app.js';
 import config from './../../config.js';
 import Dialog_class from './../../libs/popup.js';
+import Base_gui_class from "../../core/base-gui.js";
 
 class Layer_composition_class {
 
 	constructor() {
 		this.POP = new Dialog_class();
+		this.Base_gui_class = new Base_gui_class();
 	}
 
 	composition() {
@@ -40,6 +43,7 @@ class Layer_composition_class {
 		];
 
 		var initial_composition = config.layer.composition;
+		var _this = this;
 
 		var settings = {
 			title: 'Composition',
@@ -54,15 +58,25 @@ class Layer_composition_class {
 				}
 				config.layer.composition = params.composition;
 				config.need_render = true;
+				_this.Base_gui_class.GUI_layers.render_layers();
 			},
 			on_finish: function (params) {
 				config.layer.composition = initial_composition;
-				window.State.save();
 				if (params.composition == '-- Default --') {
 					params.composition = 'source-over';
 				}
-				config.layer.composition = params.composition;
+				app.State.do_action(
+					new app.Actions.Bundle_action('change_composition', 'Change Composition', [
+						new app.Actions.Update_layer_action(config.layer.id, {
+							composition: params.composition
+						})
+					])
+				);
+			},
+			on_cancel: function (params) {
+				config.layer.composition = initial_composition;
 				config.need_render = true;
+				_this.Base_gui_class.GUI_layers.render_layers();
 			},
 		};
 		this.POP.show(settings);

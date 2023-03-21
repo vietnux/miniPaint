@@ -16,7 +16,7 @@ class Image_color_class {
 
 	palette() {
 		if (config.layer.type != 'image') {
-			alertify.error('Layer must be image, convert it to raster to apply this tool.');
+			alertify.error('This layer must contain an image. Please convert it to raster to apply this tool.');
 			return;
 		}
 		var palette = this.alertify.getPalette(config.layer.link);
@@ -33,8 +33,8 @@ class Image_color_class {
 			var rgb = this.Helper.rgbToHex(palette[i][0], palette[i][1], palette[i][2]);
 			i = parseInt(i);
 			settings.params.push(
-				{title: "Color #" + (i + 1) + ":", html: this.generate_color_box(rgb, 100)},
-				);
+				{title: "Color #" + (i + 1) + ":", html: this.generate_color_box(rgb, 100)}
+			);
 		}
 		this.POP.show(settings);
 	}

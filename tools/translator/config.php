@@ -12,6 +12,7 @@ $SOURCE_DIRS = [
 ];
 
 $LANGUAGES = [
+	'ar',
 	'de',
 	'es',
 	'fr',
@@ -23,7 +24,8 @@ $LANGUAGES = [
 	'ru',
 	'tr',
 	'zh',
-    'vi'
+   'vi',
+	'el',
 ];
 
 $LANG_DIR = __DIR__ . '/../../src/js/languages/';

@@ -3,7 +3,6 @@ var path = require('path');
 
 module.exports = {
 	entry: [
-		'babel-polyfill',
 		'./src/js/main.js',
 	],
 	output: {
@@ -25,19 +24,14 @@ module.exports = {
 					'style-loader',
 					{
 						loader: 'css-loader',
-						options: {minimize: true, url: false}
+						options: {url: false}
 					}
 				]
 			},
 			{
 				test: /\.js$/,
 				exclude: /(node_modules|bower_components)/,
-				use: {
-				loader: 'babel-loader',
-					options: {
-					presets: ['env']
-					}
-				}
+				use: ['babel-loader']
 			},
 		]
 	},
@@ -53,7 +47,10 @@ module.exports = {
 	],
 	devtool: "cheap-module-source-map",
 	devServer: {
-		contentBase: "./",
-		compress: true,
+		// host: '0.0.0.0',
+		//contentBase: "./",
+		static: {
+			directory: path.resolve(__dirname, "./"),
+		},
 	}
 };

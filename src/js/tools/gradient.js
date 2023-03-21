@@ -1,3 +1,4 @@
+import app from './../app.js';
 import config from './../config.js';
 import Base_tools_class from './../core/base-tools.js';
 import Base_layers_class from './../core/base-layers.js';
@@ -14,65 +15,22 @@ class Gradient_class extends Base_tools_class {
 		this.layer = {};
 	}
 
-	dragStart(event) {
-		var _this = this;
-		if (config.TOOL.name != _this.name)
-			return;
-		_this.mousedown(event);
-	}
-
-	dragMove(event) {
-		var _this = this;
-		if (config.TOOL.name != _this.name)
-			return;
-		_this.mousemove(event);
-	}
-
-	dragEnd(event) {
-		var _this = this;
-		if (config.TOOL.name != _this.name)
-			return;
-		_this.mouseup(event);
-	}
-
 	load() {
-		var _this = this;
-
-		//mouse events
-		document.addEventListener('mousedown', function (event) {
-			_this.dragStart(event);
-		});
-		document.addEventListener('mousemove', function (event) {
-			_this.dragMove(event);
-		});
-		document.addEventListener('mouseup', function (event) {
-			_this.dragEnd(event);
-		});
-
-		// collect touch events
-		document.addEventListener('touchstart', function (event) {
-			_this.dragStart(event);
-		});
-		document.addEventListener('touchmove', function (event) {
-			_this.dragMove(event);
-		});
-		document.addEventListener('touchend', function (event) {
-			_this.dragEnd(event);
-		});
+		this.default_events();
 	}
 
 	mousedown(e) {
 		var mouse = this.get_mouse_info(e);
 		var params = this.getParams();
-		if (mouse.valid == false || mouse.click_valid == false)
+		if (mouse.click_valid == false)
 			return;
 
 		var name = this.name;
+		var is_vector = false;
 		if (params.radial == true) {
 			name = 'Radial gradient';
+			is_vector = true;
 		}
-
-		window.State.save();
 
 		//register new object - current layer is not ours or params changed
 		this.layer = {
@@ -84,14 +42,18 @@ class Gradient_class extends Base_tools_class {
 			x: mouse.x,
 			y: mouse.y,
 			rotate: null,
-			is_vector: true,
-			color: params.color_1,
+			is_vector: is_vector,
+			color: null,
 			data: {
 				center_x: mouse.x,
 				center_y: mouse.y,
 			},
 		};
-		this.Base_layers.insert(this.layer);
+		app.State.do_action(
+			new app.Actions.Bundle_action('new_gradient_layer', 'New Gradient Layer', [
+				new app.Actions.Insert_layer_action(this.layer)
+			])
+		);
 	}
 
 	mousemove(e) {
@@ -99,7 +61,7 @@ class Gradient_class extends Base_tools_class {
 		var params = this.getParams();
 		if (mouse.is_drag == false)
 			return;
-		if (mouse.valid == false || mouse.click_valid == false) {
+		if (mouse.click_valid == false) {
 			return;
 		}
 
@@ -123,7 +85,7 @@ class Gradient_class extends Base_tools_class {
 	mouseup(e) {
 		var mouse = this.get_mouse_info(e);
 		var params = this.getParams();
-		if (mouse.valid == false || mouse.click_valid == false) {
+		if (mouse.click_valid == false) {
 			config.layer.status = null;
 			return;
 		}
@@ -133,21 +95,31 @@ class Gradient_class extends Base_tools_class {
 
 		if (width == 0 && height == 0) {
 			//same coordinates - cancel
-			this.Base_layers.delete(config.layer.id);
+			app.State.scrap_last_action();
 			return;
 		}
 
+		let new_settings = {};
 		if (params.radial == true) {
-			config.layer.x = this.layer.data.center_x - width;
-			config.layer.y = this.layer.data.center_y - height;
-			config.layer.width = width * 2;
-			config.layer.height = height * 2;
+			new_settings = {
+				x: this.layer.data.center_x - width,
+				y: this.layer.data.center_y - height,
+				width: width * 2,
+				height: height * 2
+			}
 		}
 		else {
-			config.layer.width = width;
-			config.layer.height = height;
+			new_settings = {
+				width,
+				height
+			}
 		}
-		config.layer.status = null;
+		new_settings.status = null;
+
+		app.State.do_action(
+			new app.Actions.Update_layer_action(config.layer.id, new_settings),
+			{ merge_with_history: 'new_gradient_layer' }
+		);
 
 		this.Base_layers.render();
 	}
@@ -158,18 +130,26 @@ class Gradient_class extends Base_tools_class {
 
 		var params = layer.params;
 		var power = params.radial_power;
+		if(power > 99){
+			power = 99;
+		}
 		var alpha = params.alpha / 100 * 255;
-		var color1 = layer.color;
+		if(power > 255){
+			power = 255;
+		}
+
+		var color1 = params.color_1;
 		var color2 = params.color_2;
 		var radial = params.radial;
 
-		var color2_rgb = this.Helper.hex2rgb(color2);
+		var color2_rgb = this.Helper.hexToRgb(color2);
 
 		var width = layer.x + layer.width - 1;
 		var height = layer.y + layer.height - 1;
 
 		if (radial == false) {
 			//linear
+			ctx.beginPath();
 			ctx.rect(0, 0, config.WIDTH, config.HEIGHT);
 			var grd = ctx.createLinearGradient(
 				layer.x, layer.y,
